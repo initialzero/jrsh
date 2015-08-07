@@ -15,7 +15,7 @@ Table of Contents
 4. [Specifying the file path on Windows](#specifying-the-file-path-on-windows)
 
 ## Requirements
-Java >= 1.6 (Oracle or OpenJDK)
+Java >= 1.7 (Oracle or OpenJDK)
 
 ## Getting started
 This short guide will walk you through getting a basic usage of JRSH in different modes, and demonstrate some simple operations.
