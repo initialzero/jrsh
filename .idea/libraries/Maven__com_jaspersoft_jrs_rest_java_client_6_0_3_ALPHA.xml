@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.jaspersoft:jrs-rest-java-client:6.0.3-ALPHA">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jaspersoft/jrs-rest-java-client/6.0.3-ALPHA/jrs-rest-java-client-6.0.3-ALPHA.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jaspersoft/jrs-rest-java-client/6.0.3-ALPHA/jrs-rest-java-client-6.0.3-ALPHA-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jaspersoft/jrs-rest-java-client/6.0.3-ALPHA/jrs-rest-java-client-6.0.3-ALPHA-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
