@@ -1,5 +1,6 @@
 package com.jaspersoft.jasperserver.jrsh.core;
 
+import com.jaspersoft.jasperserver.jrsh.core.completion.impl.RepositoryCompleterTest;
 import com.jaspersoft.jasperserver.jrsh.core.evaluation.strategy.impl.ShellEvaluationStrategyTest;
 import com.jaspersoft.jasperserver.jrsh.core.operation.grammar.lexer.PathIdentifyingLexerTest;
 import com.jaspersoft.jasperserver.jrsh.core.operation.impl.ImportOperationTest;
@@ -15,7 +16,8 @@ import org.junit.runners.Suite.SuiteClasses;
         LoginOperationTest.class,
         ShellEvaluationStrategyTest.class,
         ImportOperationTest.class,
-        PathIdentifyingLexerTest.class
+        PathIdentifyingLexerTest.class,
+        RepositoryCompleterTest.class
 })
 public class UnitTestSuite {
 }
