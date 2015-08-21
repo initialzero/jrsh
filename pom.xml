@@ -3,21 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jaspersoft</groupId>
     <artifactId>jrsh</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.6</version>
 
     <properties>
-        <!-- default
-             unit test
-             suite -->
+    <!-- default
+         unit test
+         suite -->
         <runSuite>**/UnitTestSuite.class</runSuite>
     </properties>
 
     <repositories>
-        <!-- binary
-             repository -->
+    <!-- binary
+         repository -->
         <repository>
             <id>jrs-ce-releases</id>
             <name>JasperReports Server CE releases repository</name>
@@ -28,16 +29,11 @@
             <name>jaspersoft-releases</name>
             <url>http://jaspersoft.artifactoryonline.com/jaspersoft/simple/jrs-ce-releases/</url>
         </repository>
-        <repository>
-            <id>jline</id>
-            <name>JLine</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <!-- rest
-             client -->
+    <!-- rest
+         client -->
         <dependency>
             <groupId>com.jaspersoft</groupId>
             <artifactId>jrs-rest-java-client</artifactId>
@@ -55,8 +51,7 @@
             <version>6.0.1</version>
         </dependency>
 
-        <!-- google
-             stuff -->
+        <!-- guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
