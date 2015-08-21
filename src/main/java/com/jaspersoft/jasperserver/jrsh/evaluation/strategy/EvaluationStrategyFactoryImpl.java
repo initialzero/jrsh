@@ -29,7 +29,7 @@ import static com.jaspersoft.jasperserver.jrsh.operation.grammar.token.TokenPrec
 import static com.jaspersoft.jasperserver.jrsh.operation.grammar.token.TokenPreconditions.isScriptFileName;
 
 /**
- * An implementation of {@link EvaluationStrategyFactory}
+ * An implementation of {@link EvaluationStrategyFactory}.
  *
  * @author Alexander Krasnyanskiy
  * @since 2.0
