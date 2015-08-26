@@ -31,7 +31,9 @@ import static com.jaspersoft.jasperserver.jrsh.common.ArgumentUtil.convertToScri
 import static java.lang.System.exit;
 
 /**
- * This class used to bootstrap and launch an application.
+ * This class provides the access point for JRSH. Use it to
+ * bootstrap and launch the app in various modes and retrieve
+ * operation result.
  *
  * @author Alexander Krasnyanskiy
  * @since 2.0
@@ -44,23 +46,12 @@ public class App {
      * @param args application arguments
      */
     public static void main(String[] args) {
-        //
-        // Reset Jersey logger to prevent console pollution by
-        // REST Client.
-        //
+
         LogManager.getLogManager().reset();
-        //
-        // Define an evaluation strategy and evaluate the script
-        //
-        EvaluationStrategyFactory strategyFactory =
-                new EvaluationStrategyFactoryImpl();
 
-        EvaluationStrategy strategy =
-                strategyFactory.getStrategy(args);
-
-        OperationResult result =
-                strategy.eval(convertToScript(args));
-
+        EvaluationStrategyFactory strategyFactory = new EvaluationStrategyFactoryImpl();
+        EvaluationStrategy strategy = strategyFactory.getStrategy(args);
+        OperationResult result = strategy.eval(convertToScript(args));
         exit(result.getResultCode().getValue());
     }
 

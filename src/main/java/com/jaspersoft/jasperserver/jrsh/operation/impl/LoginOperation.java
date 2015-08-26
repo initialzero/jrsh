@@ -29,6 +29,7 @@ import com.jaspersoft.jasperserver.jrsh.operation.grammar.token.TokenPreconditio
 import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.WrongConnectionStringFormatException;
 import com.jaspersoft.jasperserver.jrsh.operation.result.OperationResult;
 import lombok.Data;
+import lombok.Getter;
 
 import static com.jaspersoft.jasperserver.jrsh.common.SessionFactory.createSharedSession;
 import static com.jaspersoft.jasperserver.jrsh.operation.result.ResultCode.FAILED;
@@ -47,11 +48,11 @@ public class LoginOperation implements Operation {
 
     private static final String OK_MSG =
             "You have logged in";
-    private static final String FORMATTED_OK_MSG =
+    private static final String LOGGED_AS =
             "You have logged in as %s";
     private static final String FAILURE_MSG =
             "Login failed";
-    private static final String FORMATTED_FAILURE_MSG =
+    private static final String LOGIN_FAILED =
             "Login failed (%s)";
 
     private String server;
@@ -59,6 +60,7 @@ public class LoginOperation implements Operation {
     private String password;
     private String organization;
 
+    @Getter
     @Parameter(
             mandatory = true, dependsOn = "login",
             values = @Value(tokenAlias = "CS", tail = true)
@@ -69,20 +71,10 @@ public class LoginOperation implements Operation {
     public OperationResult execute(Session ignored) {
         OperationResult result;
         try {
-            createSharedSession(server,
-                                username,
-                                password,
-                                organization);
-
-            result = new OperationResult(
-                    format(FORMATTED_OK_MSG, username), SUCCESS,
-                    this, null
-            );
+            createSharedSession(server, username, password, organization);
+            result = new OperationResult(format(LOGGED_AS, username), SUCCESS, this, null);
         } catch (Exception err) {
-            result = new OperationResult(
-                    format(FORMATTED_FAILURE_MSG, err.getMessage()),
-                    FAILED, this, null
-            );
+            result = new OperationResult(format(LOGIN_FAILED, err.getMessage()), FAILED, this, null);
         }
         return result;
     }
@@ -126,9 +118,5 @@ public class LoginOperation implements Operation {
                 }
                 break;
         }
-    }
-
-    public String getConnectionString() {
-        return connectionString;
     }
 }

@@ -23,7 +23,6 @@ package com.jaspersoft.jasperserver.jrsh.evaluation.strategy.impl;
 import com.jaspersoft.jasperserver.jaxrs.client.core.Session;
 import com.jaspersoft.jasperserver.jrsh.common.ConsoleBuilder;
 import com.jaspersoft.jasperserver.jrsh.common.SessionFactory;
-import com.jaspersoft.jasperserver.jrsh.completion.CompleterFactory;
 import com.jaspersoft.jasperserver.jrsh.completion.CustomCompletionHandler;
 import com.jaspersoft.jasperserver.jrsh.evaluation.strategy.AbstractEvaluationStrategy;
 import com.jaspersoft.jasperserver.jrsh.operation.Operation;
@@ -33,12 +32,13 @@ import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.OperationPars
 import com.jaspersoft.jasperserver.jrsh.operation.result.OperationResult;
 import jline.console.ConsoleReader;
 import jline.console.UserInterruptException;
-import jline.console.completer.Completer;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.jaspersoft.jasperserver.jrsh.common.SessionFactory.getSharedSession;
+import static com.jaspersoft.jasperserver.jrsh.completion.CompleterFactory.createCompleter;
 import static com.jaspersoft.jasperserver.jrsh.operation.result.ResultCode.FAILED;
 import static com.jaspersoft.jasperserver.jrsh.operation.result.ResultCode.INTERRUPTED;
 
@@ -47,6 +47,7 @@ import static com.jaspersoft.jasperserver.jrsh.operation.result.ResultCode.INTER
  */
 public class ShellEvaluationStrategy extends AbstractEvaluationStrategy {
 
+    @Setter
     private ConsoleReader console;
 
     public ShellEvaluationStrategy() {
@@ -54,7 +55,7 @@ public class ShellEvaluationStrategy extends AbstractEvaluationStrategy {
                 .withPrompt("$> ")
                 .withHandler(new CustomCompletionHandler())
                 .withInterruptHandling()
-                .withCompleter(getCompleter())
+                .withCompleter(createCompleter())
                 .build();
     }
 
@@ -80,11 +81,7 @@ public class ShellEvaluationStrategy extends AbstractEvaluationStrategy {
 
                     if (result.getResultCode() == FAILED) {
                         if (operation instanceof LoginOperation) {
-                            return new OperationResult(
-                                    result.getResultMessage(),
-                                    FAILED,
-                                    operation,
-                                    null);
+                            return new OperationResult(result.getResultMessage(), FAILED, operation, null);
                         } else {
                             // fixme {should be delegated to the Help operation (!)}
                             Master master = operation.getClass().getAnnotation(Master.class);
@@ -96,11 +93,7 @@ public class ShellEvaluationStrategy extends AbstractEvaluationStrategy {
                 line = null;
             } catch (UserInterruptException unimportant) {
                 logout();
-                return new OperationResult(
-                        "Interrupted by user",
-                        INTERRUPTED,
-                        operation,
-                        null);
+                return new OperationResult("Interrupted by user", INTERRUPTED, operation, null);
             } catch (OperationParseException err) {
                 try {
                     print(err.getMessage());
@@ -108,6 +101,7 @@ public class ShellEvaluationStrategy extends AbstractEvaluationStrategy {
                     line = null;
                 }
             } catch (IOException ignored) {
+                // NOP
             } finally {
                 operation = null;
             }
@@ -126,18 +120,10 @@ public class ShellEvaluationStrategy extends AbstractEvaluationStrategy {
         }
     }
 
-    protected Completer getCompleter() {
-        return CompleterFactory.create();
-    }
-
     protected void logout() {
         try {
             SessionFactory.getSharedSession().logout();
         } catch (Exception ignored) {
         }
-    }
-
-    public void setConsole(ConsoleReader console) {
-        this.console = console;
     }
 }

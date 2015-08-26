@@ -1,8 +1,8 @@
 class Jrsh < Formula
   desc "A Command Line Interface for JasperReports Server"
-  homepage "https://github.com/Krasnyanskiy/jrsh"
-  url "https://github.com/Krasnyanskiy/jrsh/releases/download/v2.0.4/jrsh-2.0.4.zip"
-  sha256 "b5a0471ffcc1c733c494e8c8c0c50eda9c5f786f829a7332601c8779ab1dba77"
+  homepage "https://github.com/Jaspersoft/jrsh"
+  url "https://github.com/Jaspersoft/jrsh/releases/download/v2.0.6/jrsh-2.0.6.zip"
+  sha256 "4132106cbaf121d43cd0bc53d0cc72be604500cf8f7829f963211b094f217f56"
 
   def install
     libexec.install "jrsh.jar"

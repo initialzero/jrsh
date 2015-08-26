@@ -18,15 +18,4 @@
  * You should have received a copy of the GNU Affero General Public  License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jaspersoft.jasperserver.jrsh.operation.parser.exception;
-
-import static java.lang.String.format;
-
-/**
- * @author Alexander Krasnyanskiy
- */
-public class CouldNotCreateOperationInstanceException extends OperationParseException {
-    public CouldNotCreateOperationInstanceException(Exception err) {
-        super(format("Could not create an operation instance (%s)", err.getMessage()));
-    }
-}
+package com.jaspersoft.jasperserver.jrsh.completion;

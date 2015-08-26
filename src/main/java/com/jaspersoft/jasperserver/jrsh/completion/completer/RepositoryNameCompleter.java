@@ -20,6 +20,7 @@
  */
 package com.jaspersoft.jasperserver.jrsh.completion.completer;
 
+import com.jaspersoft.jasperserver.dto.resources.ClientResourceListWrapper;
 import com.jaspersoft.jasperserver.dto.resources.ClientResourceLookup;
 import com.jaspersoft.jasperserver.jaxrs.client.core.exceptions.AuthenticationFailedException;
 import com.jaspersoft.jasperserver.jaxrs.client.core.exceptions.IllegalParameterValueException;
@@ -34,6 +35,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.jaspersoft.jasperserver.jaxrs.client.apiadapters.resources.ResourceSearchParameter.FOLDER_URI;
@@ -42,9 +44,8 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 
 @Log4j
 public class RepositoryNameCompleter implements Completer {
-
+    private static List<CharSequence> bufCandidates = new ArrayList<>();
     private static int uniqueId = 0;
-    private static List<CharSequence> bufCandidates = new ArrayList<CharSequence>();
 
     @Override
     public int complete(String buffer, int cursor, List<CharSequence> candidates) {
@@ -84,8 +85,7 @@ public class RepositoryNameCompleter implements Completer {
                                 String resource = pair.getKey();
                                 Boolean isFolder = pair.getRight();
                                 if (startsWith(resource, buffer)) {
-                                    ImmutablePair<String, Boolean> newPair =
-                                            new ImmutablePair<String, Boolean>(resource, isFolder);
+                                    ImmutablePair<String, Boolean> newPair = new ImmutablePair<>(resource, isFolder);
                                     temp.add(newPair);
                                 }
                             }
@@ -128,16 +128,21 @@ public class RepositoryNameCompleter implements Completer {
         }
     }
 
-    //---------------------------------------------------------------------
-    // Helper methods
-    //---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    //                             Helper methods
+    // ---------------------------------------------------------------------
 
     private void fillResources(List<CharSequence> candidates, List<Pair<String, Boolean>> resources) {
+        log.debug("size=" + resources.size());
+
         List<String> filteredResources;
         filteredResources = reformatResources(resources);
-        candidates.addAll(filteredResources);
-        bufCandidates.clear();
-        bufCandidates.addAll(filteredResources);
+
+        if (resources.size() != 0) {
+            candidates.addAll(filteredResources);
+            bufCandidates.clear();
+            bufCandidates.addAll(filteredResources);
+        }
     }
 
     String getLastInput(String buffer) {
@@ -192,14 +197,21 @@ public class RepositoryNameCompleter implements Completer {
         }
 
         List<ClientResourceLookup> lookups;
-        lookups = SessionFactory.getSharedSession()
+        ClientResourceListWrapper entity = SessionFactory.getSharedSession()
                 .resourcesService()
                 .resources()
                 .parameter(FOLDER_URI, path)
                 .parameter(RECURSIVE, "false")
                 .search()
-                .getEntity()
-                .getResourceLookups();
+                .getEntity();
+
+        if (entity != null) {
+            lookups = entity.getResourceLookups();
+        } else {
+            // empty folder
+            lookups = Collections.emptyList();
+        }
+
         for (ClientResourceLookup lookup : lookups) {
             String uri = lookup.getUri();
             String type = lookup.getResourceType();
@@ -228,7 +240,7 @@ public class RepositoryNameCompleter implements Completer {
             log.debug("NPE, returning empty list");
             return false;
         } catch (IllegalParameterValueException e) {
-            // bug #164 fix
+            // issue #164 fix
             return false;
         }
         return true;

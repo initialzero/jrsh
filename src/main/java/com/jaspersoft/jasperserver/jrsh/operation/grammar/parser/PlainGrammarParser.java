@@ -31,7 +31,6 @@ import com.jaspersoft.jasperserver.jrsh.operation.grammar.graph.TokenEdgeFactory
 import com.jaspersoft.jasperserver.jrsh.operation.grammar.rule.PlainRule;
 import com.jaspersoft.jasperserver.jrsh.operation.grammar.rule.Rule;
 import com.jaspersoft.jasperserver.jrsh.operation.grammar.token.Token;
-import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.CannotCreateTokenException;
 import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.OperationParseException;
 import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.WrongOperationFormatException;
 import lombok.Data;
@@ -55,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.jaspersoft.jasperserver.jrsh.operation.grammar.token.TokenUtils.instantiateToken;
+
 /**
  * Plain implementation of {@link GrammarParser} interface.
  *
@@ -62,7 +63,6 @@ import java.util.Set;
  * @since 2.0
  */
 public class PlainGrammarParser implements GrammarParser {
-
     private static Graph<Token, TokenEdge<Token>> graph;
     private static Map<String, Pair<Token, String[]>> dependencies;
     private static Map<String, RuleGroup> groups;
@@ -76,8 +76,7 @@ public class PlainGrammarParser implements GrammarParser {
      * @return operation grammar
      * @throws OperationParseException
      */
-    public Grammar parseGrammar(Operation operation)
-            throws OperationParseException {
+    public Grammar parseGrammar(Operation operation) throws OperationParseException {
         graph = new DefaultDirectedGraph<>(new TokenEdgeFactory());
         dependencies = new HashMap<>();
         groups = new HashMap<String, RuleGroup>();
@@ -88,24 +87,14 @@ public class PlainGrammarParser implements GrammarParser {
         Master master = clazz.getAnnotation(Master.class);
 
         if (master != null) {
-            root = createToken(
-                    master.tokenClass(),
-                    master.name(),
-                    master.name(),
-                    true, true
-            );
+            root = instantiateToken(master.tokenClass(), master.name(), master.name(), true, true);
 
             if (master.tail()) {
-                Rule rule = new PlainRule();
-                rule.addToken(root);
-                rules.add(rule);
+                rules.add(new PlainRule(root));
             }
 
-            dependencies.put(root.getName(),
-                    new ImmutablePair<>(root, new String[]{}));
-
+            dependencies.put(root.getName(), new ImmutablePair<>(root, new String[]{}));
             graph.addVertex(root);
-
             Field[] fields = clazz.getDeclaredFields();
 
             for (Field field : fields) {
@@ -113,65 +102,41 @@ public class PlainGrammarParser implements GrammarParser {
                 Parameter param = field.getAnnotation(Parameter.class);
 
                 if (param != null) {
-                    OperationParameter p1 = new OperationParameter();
-                    p1.getTokens().add(root);
+                    OperationParameter param1 = new OperationParameter();
+                    param1.getTokens().add(root);
 
                     for (String key : groups.keySet()) {
-                        groups.get(key).getParameters().add(p1);
+                        groups.get(key).getParameters().add(param1);
                     }
+
                     boolean isMandatory = param.mandatory();
                     Value[] values = param.values();
-                    OperationParameter p2 = new OperationParameter();
+                    OperationParameter param2 = new OperationParameter();
 
                     for (Value v : values) {
-                        Token token = createToken(
-                                v.tokenClass(),
-                                v.tokenAlias(),
-                                v.tokenValue(),
-                                isMandatory,
-                                v.tail());
+                        Token token = instantiateToken(v.tokenClass(), v.tokenAlias(), v.tokenValue(), isMandatory, v.tail());
                         graph.addVertex(token);
 
                         if (prefix != null) {
-                            Token prefixTkn = createToken(
-                                    prefix.tokenClass(),
-                                    prefix.value(),
-                                    prefix.value(),
-                                    isMandatory,
-                                    false);
-                            dependencies.put(
-                                    prefixTkn.getName(),
-                                    new ImmutablePair<>(prefixTkn,
-                                            param.dependsOn()
-                                    )
-                            );
-                            dependencies.put(
-                                    token.getName(),
-                                    new ImmutablePair<>(token,
-                                            new String[]{prefix.value()}
-                                    )
-                            );
-                            p2.getTokens().add(prefixTkn);
+                            Token prefixTkn = instantiateToken(prefix.tokenClass(), prefix.value(), prefix.value(), isMandatory, false);
+                            dependencies.put(prefixTkn.getName(), new ImmutablePair<>(prefixTkn, param.dependsOn()));
+                            dependencies.put(token.getName(), new ImmutablePair<>(token, new String[]{prefix.value()}));
+                            param2.getTokens().add(prefixTkn);
                             graph.addVertex(prefixTkn);
                         } else {
-                            dependencies.put(token.getName(),
-                                    new ImmutablePair<>(token,
-                                            param.dependsOn())
-                            );
+                            dependencies.put(token.getName(), new ImmutablePair<>(token, param.dependsOn()));
                         }
 
-                        p2.getTokens().add(token);
-                        String[] ruleGroups = param.ruleGroups();
+                        param2.getTokens().add(token);
+                        String[] ruleGroupKey = param.ruleGroups();
 
-                        for (String group : ruleGroups) {
-                            RuleGroup ruleGroup = groups.get(group);
+                        for (String groupKey : ruleGroupKey) {
+                            RuleGroup ruleGroup = groups.get(groupKey);
+
                             if (ruleGroup != null) {
-                                ruleGroup.getParameters().add(p2);
+                                ruleGroup.getParameters().add(param2);
                             } else {
-                                RuleGroup newRuleGroup = new RuleGroup();
-                                newRuleGroup.getParameters().add(p1);
-                                newRuleGroup.getParameters().add(p2);
-                                groups.put(group, newRuleGroup);
+                                groups.put(groupKey, new RuleGroup(param1, param2));
                             }
                         }
                     }
@@ -196,10 +161,9 @@ public class PlainGrammarParser implements GrammarParser {
     // ---------------------------------------------------------------------
 
     protected Set<Rule> buildRules() {
-        KShortestPaths<Token, TokenEdge<Token>> paths =
-                new KShortestPaths<>(graph, root, 2500);
+        KShortestPaths<Token, TokenEdge<Token>> paths = new KShortestPaths<>(graph, root, 2500);
         Set<Token> vertexes = graph.vertexSet();
-        Set<Rule> rules = new LinkedHashSet<Rule>();
+        Set<Rule> rules = new LinkedHashSet<>();
 
         for (Token vertex : vertexes) {
             if (!vertex.equals(root)) {
@@ -217,10 +181,6 @@ public class PlainGrammarParser implements GrammarParser {
         return rules;
     }
 
-
-    //
-    // toFix { refactoring needed (!) }
-    //
     protected boolean isValidRule(final Rule rule) {
         List<Token> tokens = rule.getTokens();
 
@@ -229,9 +189,7 @@ public class PlainGrammarParser implements GrammarParser {
                 val parameters = group.getParameters();
 
                 for (OperationParameter parameter : parameters) {
-                    Set<Token> mandatoryTokens =
-                            parameter.getOnlyMandatoryTokens();
-
+                    Set<Token> mandatoryTokens = parameter.getOnlyMandatoryTokens();
                     if (mandatoryTokens.size() > 0) {
                         boolean notContains = true;
 
@@ -250,8 +208,7 @@ public class PlainGrammarParser implements GrammarParser {
         return true;
     }
 
-    protected Rule convertGraphPathToRule(GraphPath<Token,
-            TokenEdge<Token>> path) {
+    protected Rule convertGraphPathToRule(GraphPath<Token, TokenEdge<Token>> path) {
         List<TokenEdge<Token>> list = path.getEdgeList();
         Rule rule = new PlainRule();
         Set<Token> set = new LinkedHashSet<>();
@@ -270,25 +227,9 @@ public class PlainGrammarParser implements GrammarParser {
         for (val entry : dependencies.entrySet()) {
             Pair<Token, String[]> tokenPair = entry.getValue();
             for (String dependencyName : tokenPair.getRight()) {
-                Pair<Token, String[]> dependency =
-                        dependencies.get(dependencyName);
+                Pair<Token, String[]> dependency = dependencies.get(dependencyName);
                 graph.addEdge(dependency.getLeft(), tokenPair.getLeft());
             }
-        }
-    }
-
-    protected Token createToken(Class<? extends Token> tokenType,
-                                String tokenName,
-                                String tokenValue,
-                                boolean mandatory,
-                                boolean tail)
-            throws CannotCreateTokenException {
-        try {
-            return tokenType.getConstructor(String.class, String.class,
-                    boolean.class, boolean.class).newInstance(tokenName,
-                    tokenValue, mandatory, tail);
-        } catch (Exception e) {
-            throw new CannotCreateTokenException(tokenType);
         }
     }
 
@@ -323,6 +264,10 @@ public class PlainGrammarParser implements GrammarParser {
     @EqualsAndHashCode
     protected class RuleGroup {
         Set<OperationParameter> parameters = new HashSet<>();
+
+        protected RuleGroup(OperationParameter... parameters) {
+            Collections.addAll(this.parameters, parameters);
+        }
 
         Set<Token> getGroupTokens() {
             Set<Token> set = new HashSet<>();

@@ -51,7 +51,7 @@ public class CompleterFactory {
      *
      * @return aggregated completer
      */
-    public static Completer create() {
+    public static Completer createCompleter() {
         Set<Operation> operations = createOperationsByTypes();
         AggregateCompleter aggregatedCompleter =
                 new AggregateCompleter();

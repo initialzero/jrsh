@@ -18,37 +18,15 @@
  * You should have received a copy of the GNU Affero General Public  License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jaspersoft.jasperserver.jrsh.operation.grammar.token.impl;
+package com.jaspersoft.jasperserver.jrsh.common.exception;
 
-import com.jaspersoft.jasperserver.jrsh.completion.completer.RepositoryNameCompleter;
-import com.jaspersoft.jasperserver.jrsh.operation.grammar.token.AbstractToken;
-import jline.console.completer.Completer;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import static java.lang.String.format;
 
 /**
  * @author Alexander Krasnyanskiy
  */
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RepositoryToken extends AbstractToken {
-
-    public RepositoryToken(String name, String value, boolean mandatory, boolean tailOfRule) {
-        super(name, value, mandatory, tailOfRule);
-    }
-
-    @Override
-    public Completer getCompleter() {
-        return new RepositoryNameCompleter();
-    }
-
-    @Override
-    public boolean match(String input) {
-        return input.startsWith("/") && !input.endsWith("/");
-    }
-
-    @Override
-    public String toString() {
-        return "<" + name + ">";
+public class CannotOpenScriptFileException extends RuntimeException {
+    public CannotOpenScriptFileException(String file) {
+        super(format("Cannot open script file: %s", file));
     }
 }

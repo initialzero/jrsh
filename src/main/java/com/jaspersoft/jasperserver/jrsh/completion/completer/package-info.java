@@ -18,13 +18,4 @@
  * You should have received a copy of the GNU Affero General Public  License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jaspersoft.jasperserver.jrsh.common.exception;
-
-/**
- * @author Alexander Krasnyanskiy
- */
-public class CouldNotZipFileException extends RuntimeException {
-    public CouldNotZipFileException() {
-        super("Could not pack a directory");
-    }
-}
+package com.jaspersoft.jasperserver.jrsh.completion.completer;

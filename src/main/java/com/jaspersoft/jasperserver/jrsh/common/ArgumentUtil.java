@@ -20,7 +20,7 @@
  */
 package com.jaspersoft.jasperserver.jrsh.common;
 
-import com.jaspersoft.jasperserver.jrsh.common.exception.CouldNotOpenScriptFileException;
+import com.jaspersoft.jasperserver.jrsh.common.exception.CannotOpenScriptFileException;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +64,7 @@ public abstract class ArgumentUtil {
                     try {
                         script = readLines(new File(arguments[1]));
                     } catch (IOException ignored) {
-                        throw new CouldNotOpenScriptFileException(arguments[1]);
+                        throw new CannotOpenScriptFileException(arguments[1]);
                     }
                 }
                 else if (isConnectionString(arguments[0])) {

@@ -20,7 +20,7 @@
  */
 package com.jaspersoft.jasperserver.jrsh.common;
 
-import com.jaspersoft.jasperserver.jrsh.common.exception.CouldNotZipFileException;
+import com.jaspersoft.jasperserver.jrsh.common.exception.CannotPackDirectoryException;
 import com.jaspersoft.jasperserver.jrsh.common.exception.DirectoryDoesNotExistException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,7 +57,7 @@ public class ZipUtil {
             zos.close();
             return arch;
         } catch (Exception unimportant) {
-            throw new CouldNotZipFileException();
+            throw new CannotPackDirectoryException();
         }
     }
 

@@ -23,16 +23,20 @@ package com.jaspersoft.jasperserver.jrsh.operation.grammar.rule;
 import com.jaspersoft.jasperserver.jrsh.operation.grammar.token.Token;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Alexander Krasnyanskiy
  */
 public class PlainRule implements Rule {
-    private List<Token> tokens;
+    private List<Token> tokens = new ArrayList<Token>();
 
     public PlainRule() {
-        tokens = new ArrayList<Token>();
+    }
+
+    public PlainRule(Token... tokens) {
+        Collections.addAll(this.tokens, tokens);
     }
 
     @Override

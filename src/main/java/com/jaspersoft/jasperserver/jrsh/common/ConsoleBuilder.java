@@ -20,7 +20,7 @@
  */
 package com.jaspersoft.jasperserver.jrsh.common;
 
-import com.jaspersoft.jasperserver.jrsh.common.exception.CouldNotCreateJLineConsoleException;
+import com.jaspersoft.jasperserver.jrsh.common.exception.CannotCreateJLineConsoleException;
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 import jline.console.completer.CompletionHandler;
@@ -40,7 +40,7 @@ public class ConsoleBuilder {
         try {
             this.console = new ConsoleReader();
         } catch (IOException e) {
-            throw new CouldNotCreateJLineConsoleException();
+            throw new CannotCreateJLineConsoleException();
         }
     }
 

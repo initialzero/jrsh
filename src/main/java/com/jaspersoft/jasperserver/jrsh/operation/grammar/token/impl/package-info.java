@@ -18,33 +18,4 @@
  * You should have received a copy of the GNU Affero General Public  License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jaspersoft.jasperserver.jrsh.operation.grammar.token;
-
-import jline.console.completer.Completer;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-/**
- * Base abstract token.
- *
- * @author Alexander Krasnyanskiy
- */
-@Getter
-@Setter
-@Accessors(chain = true)
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-public abstract class AbstractToken implements Token {
-    protected String name;
-    protected String value;
-    protected boolean mandatory;
-    protected boolean tailOfRule;
-
-    public abstract Completer getCompleter();
-    public abstract boolean match(String input);
-}
+package com.jaspersoft.jasperserver.jrsh.operation.grammar.token.impl;

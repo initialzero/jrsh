@@ -53,9 +53,9 @@ public abstract class OperationStateInitializer {
 
         for (Field fld : clz.getDeclaredFields()) {
             Parameter param = fld.getAnnotation(Parameter.class);
+
             if (param != null) {
                 Value[] values = param.values();
-
                 for (Value val : values) {
                     String alias = val.tokenAlias();
                     int idx = getTokenIndex(operationRuleTokens, alias);
@@ -113,9 +113,6 @@ public abstract class OperationStateInitializer {
     protected static int getTokenIndex(List<Token> tokens, String tokenAlias) {
         for (int idx = 0; idx < tokens.size(); idx++) {
             Token token = tokens.get(idx);
-            //
-            //
-            //
             if (tokenAlias.equals(token.getName())) {
                 return idx;
             }

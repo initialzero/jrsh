@@ -59,15 +59,12 @@ public abstract class PackageScanClassResolver {
      * @param basePackage package to scan
      * @return operation classes
      */
-    public static Set<Class<? extends Operation>> findOperationClasses(
-            String basePackage) {
-        val operationTypes = new HashSet<Class<? extends Operation>>();
-
+    public static Set<Class<? extends Operation>> findOperationClasses(String basePackage) {
+        HashSet<Class<? extends Operation>> operationTypes = new HashSet<>();
         MetadataScannerConfig config = readConfig();
         List<String> externalPackagesToScan = config.getPackagesToScan();
         List<String> classes = config.getClasses();
-        FilterBuilder filter =
-                new FilterBuilder().includePackage(basePackage);
+        FilterBuilder filter = new FilterBuilder().includePackage(basePackage);
         //
         // Discover external operation types from configuration file
         //

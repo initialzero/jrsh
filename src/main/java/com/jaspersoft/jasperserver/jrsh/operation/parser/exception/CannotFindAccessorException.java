@@ -27,6 +27,6 @@ import static java.lang.String.format;
  */
 public class CannotFindAccessorException extends OperationParseException {
     public CannotFindAccessorException(String fieldName) {
-        super(format("Could not find a setter for %s field", fieldName));
+        super(format("Cannot find setter for %s field", fieldName));
     }
 }

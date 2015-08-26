@@ -29,6 +29,6 @@ import static java.lang.String.format;
  */
 public class CannotCreateTokenException extends OperationParseException {
     public CannotCreateTokenException(Class<? extends Token> tokenType) {
-        super(format("Could not create a token of %s class", tokenType.getName()));
+        super(format("Cannot create token of %s class", tokenType.getName()));
     }
 }

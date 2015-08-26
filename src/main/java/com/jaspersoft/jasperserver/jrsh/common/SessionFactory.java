@@ -37,17 +37,13 @@ public abstract class SessionFactory {
         return sharedSession;
     }
 
-    public static Session createUnsharedSession(String serverUrl,
-                                                String username,
-                                                String password,
-                                                String organization) {
+    public static Session createUnsharedSession(String serverUrl, String username,
+                                                String password, String organization) {
         return createSession(serverUrl, username, password, organization);
     }
 
-    public static Session createSharedSession(String serverUrl,
-                                              String username,
-                                              String password,
-                                              String organization) {
+    public static Session createSharedSession(String serverUrl, String username,
+                                              String password, String organization) {
         return sharedSession = createSession(serverUrl, username, password, organization);
     }
 

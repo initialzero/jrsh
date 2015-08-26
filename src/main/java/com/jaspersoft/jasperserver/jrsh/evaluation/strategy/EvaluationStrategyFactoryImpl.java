@@ -40,15 +40,14 @@ public class EvaluationStrategyFactoryImpl
     /**
      * {@inheritDoc}
      */
-    public EvaluationStrategy getStrategy(String[] arguments) {
+    public EvaluationStrategy getStrategy(String[] args) {
         EvaluationStrategy strategy = null;
         Class<? extends EvaluationStrategy> strategyType;
 
-        if (arguments.length == 1 && isConnectionString(arguments[0])) {
+        if (args.length == 1 && isConnectionString(args[0])) {
             strategyType = ShellEvaluationStrategy.class;
-        } else if (arguments.length == 2
-                && "--script".equals(arguments[0])
-                && isScriptFileName(arguments[1])) {
+        } else if (args.length == 2 && "--script".equals(args[0])
+                && isScriptFileName(args[1])) {
             strategyType = ScriptEvaluationStrategy.class;
         } else {
             strategyType = ToolEvaluationStrategy.class;

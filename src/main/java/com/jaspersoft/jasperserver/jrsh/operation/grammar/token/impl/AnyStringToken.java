@@ -24,10 +24,12 @@ import com.jaspersoft.jasperserver.jrsh.completion.completer.MockCompleter;
 import com.jaspersoft.jasperserver.jrsh.operation.grammar.token.AbstractToken;
 import jline.console.completer.Completer;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Alexander Krasnyanskiy
  */
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AnyStringToken extends AbstractToken {
 

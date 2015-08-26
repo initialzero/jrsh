@@ -21,7 +21,7 @@
 package com.jaspersoft.jasperserver.jrsh.operation;
 
 import com.jaspersoft.jasperserver.jrsh.operation.annotation.Master;
-import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.CouldNotCreateOperationInstanceException;
+import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.CannotCreateOperationInstanceException;
 import com.jaspersoft.jasperserver.jrsh.operation.parser.exception.OperationNotFoundException;
 import lombok.val;
 
@@ -39,21 +39,10 @@ import static com.jaspersoft.jasperserver.jrsh.operation.PackageScanClassResolve
  * @since 2.0
  */
 public abstract class OperationFactory {
-    //
-    // Available operations container
-    //
-    private static final Map<String, Class<? extends Operation>> operations =
-            new HashMap<>();
-    //
-    // Base operation impl package
-    //
-    private static final String basePackage =
-            "com.jaspersoft.jasperserver.jrsh.operation.impl";
+    private static final Map<String, Class<? extends Operation>> operations = new HashMap<>();
+    private static final String basePackage = "com.jaspersoft.jasperserver.jrsh.operation.impl";
 
     static {
-        //
-        // Initializer
-        //
         for (val operationType : findOperationClasses(basePackage)) {
             Master annotation = operationType.getAnnotation(Master.class);
             if (annotation != null) {
@@ -96,13 +85,11 @@ public abstract class OperationFactory {
      * @param operationType the type of operation
      * @return an operation instance
      */
-    private static <T extends Operation> T createInstance(
-            Class<T> operationType)
-    {
+    private static <T extends Operation> T createInstance(Class<T> operationType) {
         try {
             return operationType.newInstance();
         } catch (Exception err) {
-            throw new CouldNotCreateOperationInstanceException(err);
+            throw new CannotCreateOperationInstanceException(err);
         }
     }
 }

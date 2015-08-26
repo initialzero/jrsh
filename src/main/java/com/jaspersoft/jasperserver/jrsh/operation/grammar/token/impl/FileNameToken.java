@@ -25,6 +25,7 @@ import com.jaspersoft.jasperserver.jrsh.completion.completer.FileNameCompleter;
 import com.jaspersoft.jasperserver.jrsh.operation.grammar.token.AbstractToken;
 import jline.console.completer.Completer;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.File;
 
@@ -32,6 +33,7 @@ import java.io.File;
  * @author Alexander Krasnyanskiy
  * @since 2.0
  */
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class FileNameToken extends AbstractToken {
 
@@ -43,8 +45,7 @@ public class FileNameToken extends AbstractToken {
      * @param mandatory  true if mandatory
      * @param tailOfRule is last token in rule
      */
-    public FileNameToken(String name, String value,
-                         boolean mandatory, boolean tailOfRule) {
+    public FileNameToken(String name, String value, boolean mandatory, boolean tailOfRule) {
         super(name, value, mandatory, tailOfRule);
     }
 

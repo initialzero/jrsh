@@ -60,11 +60,11 @@ import static org.joda.time.DateTimeZone.UTC;
         description = "<export> is used to download JRS resources")
 public class ExportOperation implements Operation {
 
-    private static final String FORMATTED_OK_MSG =
+    private static final String EXPORT_SUCCESS =
             "Export status: Success (File has been created: %s)";
     private static final String FAILURE_MSG =
             "Export failed";
-    private static final String FORMATTED_FAILURE_MSG =
+    private static final String EXPORT_FAILED =
             "Export failed (%s)";
 
     @Parameter(mandatory = true, dependsOn = "export",
@@ -172,8 +172,7 @@ public class ExportOperation implements Operation {
                 if (to != null) {
                     if (fileUri != null) {
                         if (fileUri.startsWith("~")) {
-                            fileUri = fileUri.replaceFirst("^~",
-                                    getProperty("user.home"));
+                            fileUri = fileUri.replaceFirst("^~", getProperty("user.home"));
                             if (!SystemUtils.IS_OS_WINDOWS) {
                                 fileUri = fileUri.replaceAll("\\\\", "");
                             }
@@ -183,7 +182,7 @@ public class ExportOperation implements Operation {
                     }
                 } else {
                     DateTime dateTime = DateTime.now().toDateTime(UTC);
-                    File target = new File(format("export_%s.zip", dateTime));
+                    File target = new File(format("export_%s.zip", dateTime).replaceAll(":", "_"));
                     FileUtils.copyInputStreamToFile(entity, target);
                     fileUri = target.getAbsolutePath();
                 }
@@ -204,13 +203,9 @@ public class ExportOperation implements Operation {
                 FileUtils.copyInputStreamToFile(entity, target);
                 fileUri = target.getAbsolutePath();
             }
-            result = new OperationResult(
-                    format(FORMATTED_OK_MSG, fileUri), SUCCESS,
-                    this, null);
+            result = new OperationResult(format(EXPORT_SUCCESS, fileUri), SUCCESS, this, null);
         } catch (Exception err) {
-            result = new OperationResult(
-                    FAILURE_MSG, FAILED,
-                    this, null);
+            result = new OperationResult(FAILURE_MSG, FAILED, this, null);
         }
 
         return result;
